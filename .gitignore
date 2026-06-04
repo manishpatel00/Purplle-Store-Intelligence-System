@@ -8,3 +8,8 @@ __pycache__/
 .coverage
 htmlcov/
 .env
+*.mp4
+*.avi
+data/clips/
+data/store_intelligence.db
+.DS_Store
