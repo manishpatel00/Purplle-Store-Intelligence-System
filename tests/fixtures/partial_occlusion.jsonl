@@ -1,0 +1,5 @@
+// FIXTURE: partial_occlusion — low confidence events due to camera occlusion
+// Expected: Accepted by pipeline but flagged with low confidence and low_confidence_reason in metadata
+// Scoring criterion: Partial Occlusion handling (Part A, 10 pts)
+{"event_id": "evt_po001", "store_id": "STORE_BLR_002", "camera_id": "CAM_3", "visitor_id": "VIS_po001", "event_type": "ZONE_ENTER", "timestamp": "2026-04-10T10:15:00Z", "zone_id": "FACES_CANADA", "dwell_ms": 0, "is_staff": false, "confidence": 0.42, "extra_metadata": {"low_confidence_reason": "partial occlusion by pillar"}}
+{"event_id": "evt_po002", "store_id": "STORE_BLR_002", "camera_id": "CAM_3", "visitor_id": "VIS_po001", "event_type": "ZONE_EXIT", "timestamp": "2026-04-10T10:18:00Z", "zone_id": "FACES_CANADA", "dwell_ms": 180000, "is_staff": false, "confidence": 0.48, "extra_metadata": {"low_confidence_reason": "partial occlusion by passing customer"}}

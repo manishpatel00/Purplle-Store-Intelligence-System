@@ -1,0 +1,3 @@
+// FIXTURE: empty_store — Zero events
+// Expected: 0 events, 0 metrics, handles empty gracefully
+// Scoring criterion: Empty handling (Part A, 10 pts)

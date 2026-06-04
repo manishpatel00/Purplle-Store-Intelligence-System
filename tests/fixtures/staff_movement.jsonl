@@ -1,0 +1,8 @@
+// FIXTURE: staff_movement — Staff enters and exits various zones
+// Expected: 0 customer visits, is_staff=true throughout, excluded from metric KPIs
+// Scoring criterion: Staff filtering (Part A, 10 pts)
+{"event_id": "evt_s001", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_s001", "event_type": "ENTRY", "timestamp": "2026-04-10T10:01:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": true, "confidence": 0.95}
+{"event_id": "evt_s002", "store_id": "STORE_BLR_002", "camera_id": "CAM_2", "visitor_id": "VIS_s001", "event_type": "ZONE_ENTER", "timestamp": "2026-04-10T10:02:00Z", "zone_id": "GOOD_VIBES", "dwell_ms": 0, "is_staff": true, "confidence": 0.95}
+{"event_id": "evt_s003", "store_id": "STORE_BLR_002", "camera_id": "CAM_2", "visitor_id": "VIS_s001", "event_type": "ZONE_EXIT", "timestamp": "2026-04-10T10:05:00Z", "zone_id": "GOOD_VIBES", "dwell_ms": 180000, "is_staff": true, "confidence": 0.95}
+{"event_id": "evt_s004", "store_id": "STORE_BLR_002", "camera_id": "CAM_5", "visitor_id": "VIS_s001", "event_type": "BILLING_QUEUE_JOIN", "timestamp": "2026-04-10T10:06:00Z", "zone_id": "CASH_COUNTER", "dwell_ms": 0, "is_staff": true, "confidence": 0.95}
+{"event_id": "evt_s005", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_s001", "event_type": "EXIT", "timestamp": "2026-04-10T10:10:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 540000, "is_staff": true, "confidence": 0.95}

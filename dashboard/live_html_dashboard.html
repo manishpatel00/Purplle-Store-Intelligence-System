@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.num{font-family:var(--font-mono)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:999px}
+.badge-live{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-crit{background:var(--color-background-danger);color:var(--color-text-danger)}
+.badge-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge-info{background:var(--color-background-info);color:var(--color-text-info)}
+.kpi-label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.kpi-val{font-size:26px;font-weight:500;font-family:var(--font-mono);line-height:1}
+.kpi-sub{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+.section-header{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--color-text-success);display:inline-block;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.event-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;animation:slideIn .3s ease}
+.event-row:last-child{border-bottom:none}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.event-type{font-family:var(--font-mono);font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;min-width:80px;text-align:center}
+.et-entry{background:var(--color-background-success);color:var(--color-text-success)}
+.et-exit{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.et-zone{background:var(--color-background-info);color:var(--color-text-info)}
+.et-queue{background:var(--color-background-warning);color:var(--color-text-warning)}
+.et-reentry{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.funnel-stage{border-radius:var(--border-radius-md)}
+.zone-row{display:grid;grid-template-columns:120px 1fr 52px 64px;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.zone-row:last-child{border-bottom:none}
+.heat-bar-bg{background:var(--color-border-tertiary);border-radius:999px;height:6px;overflow:hidden}
+.heat-bar{height:6px;border-radius:999px;transition:width .6s ease}
+.anomaly-card{border-radius:var(--border-radius-md);padding:.75rem 1rem;margin-bottom:8px;border-left:3px solid}
+.anomaly-crit{background:var(--color-background-danger);border-color:var(--color-text-danger)}
+.anomaly-warn{background:var(--color-background-warning);border-color:var(--color-text-warning)}
+.anomaly-info{background:var(--color-background-info);border-color:var(--color-text-info)}
+</style>
+</head>
+<body>
+<h2 class="sr-only">Purplle Store Intelligence Dashboard — Brigade Road ST1008, real-time analytics showing 47 visitors, 23.4% conversion rate</h2>
+
+<div style="padding:1rem 0">
+
+<!-- HEADER -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:14px">P</div>
+    <div>
+      <div style="font-size:15px;font-weight:500">Store Intelligence</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Brigade Road · ST1008</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="badge badge-live"><span class="pulse"></span>Live · 2026-04-10</span>
+    <span style="font-size:12px;color:var(--color-text-secondary);font-family:var(--font-mono)" id="clock">–</span>
+  </div>
+</div>
+
+<!-- KPI ROW -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.25rem">
+  <div class="card">
+    <div class="kpi-label"><i class="ti ti-users" aria-hidden="true"></i>Footfall</div>
+    <div class="kpi-val" id="kpi-footfall">0</div>
+    <div class="kpi-sub" id="kpi-reentry">0 re-entries</div>
+  </div>
+  <div class="card">
+    <div class="kpi-label"><i class="ti ti-shopping-cart" aria-hidden="true"></i>Conversion</div>
+    <div class="kpi-val" id="kpi-conv">0.0%</div>
+    <div class="kpi-sub" id="kpi-billing">0 billing visitors</div>
+  </div>
+  <div class="card">
+    <div class="kpi-label"><i class="ti ti-clock" aria-hidden="true"></i>Avg dwell</div>
+    <div class="kpi-val" id="kpi-dwell">0s</div>
+    <div class="kpi-sub">Across active zones</div>
+  </div>
+  <div class="card">
+    <div class="kpi-label"><i class="ti ti-users-group" aria-hidden="true"></i>Live queue</div>
+    <div class="kpi-val" id="kpi-queue">0</div>
+    <div class="kpi-sub" id="kpi-abandon">0.0% abandon rate</div>
+  </div>
+  <div class="card">
+    <div class="kpi-label"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Anomalies</div>
+    <div class="kpi-val" id="kpi-anom" style="color:var(--color-text-danger)">0</div>
+    <div class="kpi-sub" id="kpi-anom-sub">No active anomalies</div>
+  </div>
+</div>
+
+<!-- CHART + EVENT TICKER -->
+<div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:1.25rem">
+  <div class="card">
+    <div class="section-header"><i class="ti ti-chart-area-line" aria-hidden="true"></i>Hourly footfall</div>
+    <div style="position:relative;height:180px">
+      <canvas id="footfallChart" role="img" aria-label="Hourly footfall chart showing visitor count by hour">Hourly visitors: 9am 8, 10am 12, 11am 15, 12pm 18, 1pm 14, 2pm 10, 3pm 9, 4pm 12, 5pm 16, 6pm 19, 7pm 11, 8pm 8, 9pm 4.</canvas>
+    </div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column">
+    <div class="section-header"><span class="pulse"></span>Live event feed <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--color-text-secondary)" id="evt-count">0 events</span></div>
+    <div id="event-list" style="flex:1;overflow:hidden;min-height:160px"></div>
+  </div>
+</div>
+
+<!-- CONVERSION FUNNEL -->
+<div class="card" style="margin-bottom:1.25rem">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+    <div class="section-header" style="margin:0"><i class="ti ti-filter" aria-hidden="true"></i>Conversion funnel</div>
+    <span style="font-size:12px;color:var(--color-text-secondary)">Session-level · no re-entry inflation</span>
+  </div>
+  <div id="funnel-stages" style="display:flex;flex-direction:column;gap:8px"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1rem" id="funnel-rates"></div>
+</div>
+
+<!-- HEATMAP + ANOMALIES -->
+<div style="display:grid;grid-template-columns:3fr 2fr;gap:12px">
+  <div class="card">
+    <div class="section-header"><i class="ti ti-map" aria-hidden="true"></i>Zone heatmap <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--color-text-secondary)" id="hmap-conf"></span></div>
+    <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:0;font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;padding:0 0 4px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <span>Zone</span><span style="padding-left:10px">Intensity</span><span style="text-align:right">Visits</span><span style="text-align:right;padding-left:16px">Avg dwell</span>
+    </div>
+    <div id="heatmap-list"></div>
+  </div>
+  <div class="card">
+    <div class="section-header"><i class="ti ti-bell" aria-hidden="true"></i>Active anomalies</div>
+    <div id="anomaly-list"></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let DATA = {
+  metrics:{unique_visitors:47,conversion_rate_pct:23.4,current_queue_depth:3,abandonment_rate_pct:12.5,billing_visitors:23,reentry_count:4,avg_dwell_sec:162},
+  funnel:[
+    {name:"Store entry",count:47,icon:"ti-door-enter"},
+    {name:"Product zone visit",count:38,icon:"ti-map-pin"},
+    {name:"Billing queue",count:23,icon:"ti-shopping-bag"},
+    {name:"Completed purchase",count:11,icon:"ti-receipt"}
+  ],
+  hourly:{"09:00":8,"10:00":12,"11:00":15,"12:00":18,"13:00":14,"14:00":10,"15:00":9,"16:00":12,"17:00":16,"18:00":19,"19:00":11,"20:00":8,"21:00":4},
+  heatmap:[
+    {zone:"SKINCARE",visits:31,dwell_s:252,intensity:82},
+    {zone:"FOH",visits:29,dwell_s:198,intensity:77},
+    {zone:"MINIMALIST",visits:24,dwell_s:168,intensity:64},
+    {zone:"GOOD_VIBES",visits:19,dwell_s:144,intensity:51},
+    {zone:"MAYBELLINE",visits:15,dwell_s:120,intensity:40},
+    {zone:"AQUALOGICA",visits:12,dwell_s:96,intensity:32},
+    {zone:"BILLING_QUEUE",visits:23,dwell_s:224,intensity:61},
+    {zone:"FRAGRANCE",visits:7,dwell_s:60,intensity:19},
+    {zone:"ACCESSORIES",visits:4,dwell_s:42,intensity:11},
+    {zone:"NY_BAE",visits:2,dwell_s:30,intensity:5}
+  ],
+  anomalies:[
+    {type:"BILLING_QUEUE_SPIKE",severity:"CRITICAL",time:"18:42",detail:"Queue depth reached 7 for 4 min",action:"Open another billing counter"},
+    {type:"CONVERSION_DROP",severity:"WARN",time:"14:15",detail:"23.4% vs 7-day avg 31.2% (−25%)",action:"Inspect queue and POS feed freshness"},
+    {type:"STALE_FEED",severity:"INFO",time:"09:02",detail:"STORE_001_ZONE_02 lag 14 min",action:"Check source camera and replay worker"}
+  ]
+};
+
+function animateNum(el,target,suffix,dec){
+  let cur=0,steps=24,i=0;
+  const inc=target/steps;
+  const t=setInterval(()=>{
+    i++;cur=Math.min(i*inc,target);
+    el.textContent=(dec?cur.toFixed(dec):Math.round(cur))+suffix;
+    if(i>=steps)clearInterval(t);
+  },20);
+}
+
+function fmtDwell(s){
+  if(s<60)return s+'s';
+  return Math.floor(s/60)+'m '+(s%60)+'s';
+}
+
+function dropoff(from,to){
+  if(!from||from===0)return null;
+  return ((from-to)/from*100).toFixed(1);
+}
+
+function renderKPIs(){
+  const m=DATA.metrics;
+  const fEl=document.getElementById('kpi-footfall');
+  const cEl=document.getElementById('kpi-conv');
+  const qEl=document.getElementById('kpi-queue');
+  const dEl=document.getElementById('kpi-dwell');
+  const aEl=document.getElementById('kpi-anom');
+  animateNum(fEl,m.unique_visitors,'',0);
+  setTimeout(()=>animateNum(cEl,m.conversion_rate_pct,'%',1),80);
+  setTimeout(()=>animateNum(qEl,m.current_queue_depth,'',0),160);
+  setTimeout(()=>{dEl.textContent=fmtDwell(m.avg_dwell_sec)},200);
+  setTimeout(()=>animateNum(aEl,DATA.anomalies.length,'',0),240);
+  document.getElementById('kpi-reentry').textContent=m.reentry_count+' re-entries';
+  document.getElementById('kpi-billing').textContent=m.billing_visitors+' billing visitors';
+  document.getElementById('kpi-abandon').textContent=m.abandonment_rate_pct.toFixed(1)+'% abandon rate';
+  const acount=DATA.anomalies.filter(a=>a.severity==='CRITICAL').length;
+  document.getElementById('kpi-anom-sub').textContent=acount+' critical';
+}
+
+function renderChart(){
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const labels=Object.keys(DATA.hourly);
+  const vals=Object.values(DATA.hourly);
+  const gridColor=isDark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
+  const textColor=isDark?'rgba(255,255,255,.45)':'rgba(0,0,0,.45)';
+  new Chart(document.getElementById('footfallChart'),{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Visitors',data:vals,
+      fill:true,
+      backgroundColor:isDark?'rgba(139,92,246,.18)':'rgba(124,58,237,.12)',
+      borderColor:isDark?'rgba(167,139,250,.9)':'rgba(124,58,237,.8)',
+      borderWidth:2,pointRadius:3,pointBackgroundColor:isDark?'#a78bfa':'#7c3aed',
+      tension:.35
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' Visitors: '+c.raw}}},
+      scales:{
+        x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:10},maxRotation:0},border:{display:false}},
+        y:{grid:{color:gridColor},ticks:{color:textColor,font:{size:10},stepSize:5},border:{display:false},min:0}
+      }
+    }
+  });
+}
+
+function renderFunnel(){
+  const stages=DATA.funnel;
+  const maxCount=stages[0].count;
+  const container=document.getElementById('funnel-stages');
+  const colors=['#7c3aed','#0891b2','#059669','#d97706'];
+  const lightColors=['rgba(124,58,237,.15)','rgba(8,145,178,.15)','rgba(5,150,105,.15)','rgba(217,119,6,.15)'];
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  stages.forEach((s,i)=>{
+    const pct=((s.count/maxCount)*100).toFixed(0);
+    const row=document.createElement('div');
+    row.style.cssText='position:relative';
+    const bg=document.createElement('div');
+    bg.style.cssText=`height:44px;border-radius:8px;background:${isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)'};overflow:hidden;position:relative`;
+    const fill=document.createElement('div');
+    fill.style.cssText=`position:absolute;left:0;top:0;height:100%;width:0;border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1);background:${isDark?'rgba('+colors[i].slice(1).match(/../g).map(h=>parseInt(h,16)).join(',')+`,.25)`:lightColors[i]}`;
+    const label=document.createElement('div');
+    label.style.cssText='position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px';
+    label.innerHTML=`<span style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px"><i class="ti ${s.icon}" aria-hidden="true" style="color:${colors[i]};font-size:15px"></i>${s.name}</span><span style="font-family:var(--font-mono);font-size:14px;font-weight:500">${s.count} <span style="font-size:11px;color:var(--color-text-secondary);font-weight:400">${i===0?'100%':((s.count/maxCount)*100).toFixed(0)+'%'}</span></span>`;
+    bg.appendChild(fill);bg.appendChild(label);
+    if(i<stages.length-1){
+      const d=dropoff(stages[i].count,stages[i+1].count);
+      if(d!==null&&stages[i].count>0){
+        const arr=document.createElement('div');
+        arr.style.cssText='text-align:center;font-size:11px;color:var(--color-text-secondary);padding:2px 0;display:flex;align-items:center;justify-content:center;gap:6px';
+        const isHigh=parseFloat(d)>50;
+        arr.innerHTML=`<i class="ti ti-arrow-down" aria-hidden="true" style="font-size:10px;${isHigh?'color:var(--color-text-danger)':''}"></i><span style="${isHigh?'color:var(--color-text-danger)':''}">−${d}% drop-off</span>`;
+        row.appendChild(bg);row.appendChild(arr);
+      } else if(d===null){
+        const arr=document.createElement('div');
+        arr.style.cssText='text-align:center;font-size:11px;color:var(--color-text-secondary);padding:2px 0';
+        arr.textContent='↓ —';
+        row.appendChild(bg);row.appendChild(arr);
+      } else {
+        row.appendChild(bg);
+      }
+    } else {
+      row.appendChild(bg);
+    }
+    container.appendChild(row);
+    setTimeout(()=>{fill.style.width=pct+'%'},50+i*120);
+  });
+  const rates=document.getElementById('funnel-rates');
+  const s=DATA.funnel;
+  const r1=dropoff(s[0].count,s[1].count);
+  const r2=dropoff(s[1].count,s[2].count);
+  const r3=dropoff(s[2].count,s[3].count);
+  [
+    {label:'Entry → zone',val:r1?((1-parseFloat(r1)/100)*100).toFixed(0)+'%':'—'},
+    {label:'Zone → billing',val:r2?((1-parseFloat(r2)/100)*100).toFixed(0)+'%':'—'},
+    {label:'Purchase rate',val:r3?((s[3].count/s[0].count)*100).toFixed(1)+'%':'—'}
+  ].forEach(({label,val})=>{
+    const d=document.createElement('div');
+    d.style.cssText='text-align:center;padding:.75rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)';
+    d.innerHTML=`<div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">${label}</div><div style="font-size:18px;font-weight:500;font-family:var(--font-mono)">${val}</div>`;
+    rates.appendChild(d);
+  });
+}
+
+function renderHeatmap(){
+  const list=document.getElementById('heatmap-list');
+  const max=Math.max(...DATA.heatmap.map(z=>z.intensity));
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const ci=DATA.heatmap.length<20;
+  if(ci)document.getElementById('hmap-conf').textContent='⚠ data_confidence: LOW';
+  DATA.heatmap.forEach(z=>{
+    const pct=Math.round((z.intensity/max)*100);
+    const barColor=z.intensity>70?(isDark?'#a78bfa':'#7c3aed'):z.intensity>40?(isDark?'#38bdf8':'#0891b2'):(isDark?'#34d399':'#059669');
+    const row=document.createElement('div');
+    row.className='zone-row';
+    row.innerHTML=`<span style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${z.zone}">${z.zone}</span><div style="padding-left:10px"><div class="heat-bar-bg"><div class="heat-bar" style="width:0%;background:${barColor}" data-w="${pct}%"></div></div></div><span class="num" style="text-align:right;font-size:12px">${z.visits}</span><span class="num" style="text-align:right;font-size:12px;color:var(--color-text-secondary)">${fmtDwell(z.dwell_s)}</span>`;
+    list.appendChild(row);
+  });
+  setTimeout(()=>{document.querySelectorAll('.heat-bar[data-w]').forEach(b=>b.style.width=b.dataset.w)},100);
+}
+
+function renderAnomalies(){
+  const list=document.getElementById('anomaly-list');
+  if(DATA.anomalies.length===0){
+    list.innerHTML='<div style="text-align:center;color:var(--color-text-secondary);font-size:13px;padding:2rem 0"><i class="ti ti-check" style="font-size:20px;display:block;margin-bottom:8px"></i>No anomalies detected</div>';
+    return;
+  }
+  const cls={CRITICAL:'anomaly-crit',WARN:'anomaly-warn',INFO:'anomaly-info'};
+  const bdg={CRITICAL:'badge-crit',WARN:'badge-warn',INFO:'badge-info'};
+  DATA.anomalies.forEach(a=>{
+    const d=document.createElement('div');
+    d.className='anomaly-card '+cls[a.severity];
+    d.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;font-weight:500;font-family:var(--font-mono)">${a.type}</span><span class="badge ${bdg[a.severity]}">${a.severity}</span></div><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">${a.detail}</div><div style="font-size:11px;display:flex;align-items:center;gap:4px"><i class="ti ti-arrow-right" aria-hidden="true" style="font-size:10px"></i>${a.action}</div>`;
+    list.appendChild(d);
+  });
+}
+
+const EVENT_TYPES=[
+  {t:'ENTRY',cls:'et-entry'},{t:'ZONE_ENTER',cls:'et-zone'},{t:'ZONE_EXIT',cls:'et-zone'},
+  {t:'ZONE_DWELL',cls:'et-zone'},{t:'EXIT',cls:'et-exit'},{t:'BILLING_QUEUE_JOIN',cls:'et-queue'},
+  {t:'REENTRY',cls:'et-reentry'}
+];
+const ZONES=['SKINCARE','FOH','MINIMALIST','GOOD_VIBES','MAYBELLINE','BILLING_QUEUE'];
+const VIS=['VIS_a3f2','VIS_b7e1','VIS_c9d4','VIS_d2a8','VIS_e5f3'];
+let evtCount=0;
+
+function pushEvent(){
+  const et=EVENT_TYPES[Math.floor(Math.random()*EVENT_TYPES.length)];
+  const vis=VIS[Math.floor(Math.random()*VIS.length)];
+  const zone=ZONES[Math.floor(Math.random()*ZONES.length)];
+  const now=new Date();
+  const ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+  evtCount++;
+  document.getElementById('evt-count').textContent=evtCount+' events';
+  const list=document.getElementById('event-list');
+  const row=document.createElement('div');
+  row.className='event-row';
+  row.innerHTML=`<span class="event-type ${et.cls}">${et.t}</span><span style="color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">${vis}</span><span style="color:var(--color-text-secondary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${et.t.includes('ZONE')||et.t.includes('BILLING')?zone:''}</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary)">${ts}</span>`;
+  list.insertBefore(row,list.firstChild);
+  while(list.children.length>8)list.removeChild(list.lastChild);
+}
+
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' IST';
+}
+
+const STORE_ID = "STORE_BLR_002";
+const API_BASE = "http://localhost:8000/api/v1";
+
+async function fetchLiveData() {
+  try {
+    const [mRes, fRes, aRes] = await Promise.all([
+      fetch(`${API_BASE}/stores/${STORE_ID}/metrics`),
+      fetch(`${API_BASE}/stores/${STORE_ID}/funnel`),
+      fetch(`${API_BASE}/stores/${STORE_ID}/anomalies`)
+    ]);
+    const m = await mRes.json();
+    const f = await fRes.json();
+    const a = await aRes.json();
+    
+    if (m && !m.detail) {
+      DATA.metrics = m;
+      DATA.hourly = m.hourly_footfall || {};
+      const maxDwell = Math.max(...Object.values(m.avg_dwell_by_zone_sec || {"NONE":0}), 1);
+      DATA.heatmap = Object.entries(m.avg_dwell_by_zone_sec || {}).map(([zone, dwell]) => ({
+        zone: zone.replace(/_/g, ' '), 
+        dwell_s: dwell, 
+        visits: m.zone_visits ? m.zone_visits[zone] : 0, 
+        intensity: Math.round((dwell / maxDwell) * 100)
+      })).filter(z => z.dwell_s > 0).sort((x,y) => y.intensity - x.intensity);
+    }
+    
+    if (f && f.funnel) {
+      DATA.funnel = f.funnel.map(st => ({
+        name: st.label, count: st.count, 
+        icon: st.stage === 'entry' ? "ti-door-enter" : st.stage === 'zone_visit' ? "ti-map-pin" : st.stage === 'billing_queue' ? "ti-shopping-bag" : "ti-receipt"
+      }));
+    }
+    
+    if (a && a.active_anomalies) {
+      DATA.anomalies = a.active_anomalies.map(an => ({
+        type: an.anomaly_id, severity: an.severity, 
+        time: new Date(an.detected_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), 
+        detail: an.message, action: an.suggested_action
+      }));
+    }
+    
+    document.getElementById('funnel-stages').innerHTML = '';
+    document.getElementById('funnel-rates').innerHTML = '';
+    document.getElementById('heatmap-list').innerHTML = '';
+    document.getElementById('anomaly-list').innerHTML = '';
+    
+    renderKPIs();
+    renderFunnel();
+    renderHeatmap();
+    renderAnomalies();
+    
+    const chartContainer = document.getElementById('footfallChart').parentNode;
+    chartContainer.innerHTML = '<canvas id="footfallChart"></canvas>';
+    renderChart();
+  } catch(e) {
+    console.error("Live fetch failed", e);
+  }
+}
+
+renderKPIs();
+renderFunnel();
+renderHeatmap();
+renderAnomalies();
+renderChart();
+updateClock();
+setInterval(updateClock,1000);
+setInterval(fetchLiveData, 15000);
+fetchLiveData();
+
+// Live SSE Event Feed
+const evtSource = new EventSource(`${API_BASE}/events/stream`);
+evtSource.onmessage = function(event) {
+  const ev = JSON.parse(event.data);
+  const et = EVENT_TYPES.find(x => x.t === ev.event_type) || {t: ev.event_type, cls: 'et-zone'};
+  const vis = (ev.visitor_id || "").substring(0,8);
+  const zone = ev.zone_id || "";
+  const ts = new Date(ev.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+  
+  evtCount++;
+  document.getElementById('evt-count').textContent = evtCount + ' events';
+  const list = document.getElementById('event-list');
+  const row = document.createElement('div');
+  row.className = 'event-row';
+  row.innerHTML = `<span class="event-type ${et.cls}">${et.t}</span><span style="color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">${vis}</span><span style="color:var(--color-text-secondary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${zone.replace(/_/g, ' ')}</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary)">${ts}</span>`;
+  list.insertBefore(row, list.firstChild);
+  while(list.children.length > 8) list.removeChild(list.lastChild);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "TCH"]
+ignore = ["E501", "B008"]  # handled by formatter, ignore FastAPI Depends in defaults
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "pipeline"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+exclude = ["tests/", "migrations/"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short --cov=app --cov=pipeline --cov-report=term-missing"
+markers = [
+    "integration: requires GPU or real CCTV files",
+    "slow: takes > 5 seconds",
+]
+
+[tool.coverage.run]
+source = ["app", "pipeline"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/__main__.py",
+    "pipeline/detect.py",
+    "pipeline/staff_classifier.py",
+    "pipeline/zone_mapper.py",
+    "pipeline/synthetic_events.py",
+    "pipeline/validate_schema.py",
+    "pipeline/replay.py"
+]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true
+skip_covered = false
+
+# Targeted mypy overrides for SQLAlchemy ORM false-positives
+# (column comparisons, select() overloads, sessionmaker typing)
+[[tool.mypy.overrides]]
+module = [
+    "app.metrics",
+    "app.funnel",
+    "app.anomalies",
+    "app.ingestion",
+    "app.health",
+    "app.worker",
+    "app.models",
+    "app.database",
+    "pipeline.zone_mapper",
+    "pipeline.sessions",
+    "pipeline.synthetic_events",
+    "pipeline.detect",
+    "pipeline.replay",
+    "pipeline.validate_schema",
+]
+disable_error_code = [
+    "arg-type",
+    "attr-defined",
+    "call-overload",
+    "union-attr",
+    "no-any-return",
+    "misc",
+    "var-annotated",
+    "valid-type",
+]

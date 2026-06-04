@@ -1,0 +1,97 @@
+
+
+networks:
+  internal:
+    driver: bridge
+  public:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: purplle-postgres
+    environment:
+      - POSTGRES_USER=si_user
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DB=store_intel
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: purplle-redis
+    networks:
+      - internal
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: purplle-store-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://si_user:changeme@postgres/store_intel
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+      - ENVIRONMENT=development
+      - CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+      - PROMETHEUS_ENABLED=false
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - internal
+      - public
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: ""
+    container_name: purplle-dashboard
+    ports:
+      - "5173:80"
+    networks:
+      - public
+      - internal
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.pipeline
+    container_name: purplle-pipeline
+    volumes:
+      - ./data:/app/data
+    environment:
+      - API_URL=http://api:8000
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      api:
+        condition: service_healthy
+    profiles:
+      - pipeline
+    networks:
+      - internal
+      - public
+
+volumes:
+  postgres_data:

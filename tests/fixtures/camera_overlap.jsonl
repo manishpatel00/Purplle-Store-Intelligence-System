@@ -1,0 +1,5 @@
+// FIXTURE: camera_overlap — same person triggers ENTRY on overlapping cameras within 20s
+// Expected: Handled as a single session by cross-camera deduplication, not two separate sessions
+// Scoring criterion: Camera overlap (Part A, 10 pts)
+{"event_id": "evt_co001", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_co001", "event_type": "ENTRY", "timestamp": "2026-04-10T12:00:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": false, "confidence": 0.9}
+{"event_id": "evt_co002", "store_id": "STORE_BLR_002", "camera_id": "CAM_2", "visitor_id": "VIS_co001", "event_type": "ENTRY", "timestamp": "2026-04-10T12:00:05Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": false, "confidence": 0.9}

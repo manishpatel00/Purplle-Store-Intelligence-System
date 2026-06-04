@@ -1,0 +1,69 @@
+{
+  "store_id": "STORE_BLR_002",
+  "store_name": "Brigade_Bangalore",
+  "legacy_store_id": "ST1008",
+  "city": "Bangalore",
+  "open_hours": {"open": "10:00", "close": "22:00"},
+  "cameras": [
+    {
+      "camera_id": "CAM_1",
+      "file": "CAM 1.mp4",
+      "type": "entry",
+      "description": "Main store entry/exit threshold",
+      "zone": "ENTRY_EXIT"
+    },
+    {
+      "camera_id": "CAM_2",
+      "file": "CAM 2.mp4",
+      "type": "floor",
+      "description": "Top-row brand zone — skincare side",
+      "zones": ["EB_KOREAN", "GOOD_VIBES", "DERMDOC", "MINIMALIST", "AQUALOGICA", "LAKME_SKIN"]
+    },
+    {
+      "camera_id": "CAM_3",
+      "file": "CAM 3.mp4",
+      "type": "floor",
+      "description": "Bottom-row brand zone — makeup side",
+      "zones": ["MAYBELLINE", "FACES_CANADA", "LAKME_MAKEUP", "COLORBAR_SUGAR", "SWISS_BEAUTY", "NY_BAE", "ALPS_GOODNESS"]
+    },
+    {
+      "camera_id": "CAM_4",
+      "file": "CAM 4.mp4",
+      "type": "floor",
+      "description": "Central units — FOH, Fragrance, Nail, Makeup units",
+      "zones": ["FOH", "FRAGRANCE", "NAIL_UNIT", "MAKEUP_UNIT"]
+    },
+    {
+      "camera_id": "CAM_5",
+      "file": "CAM 5.mp4",
+      "type": "billing",
+      "description": "Cash counter and billing queue area",
+      "zones": ["CASH_COUNTER", "BILLING_QUEUE"]
+    }
+  ],
+  "zones": [
+    {"zone_id": "ENTRY_EXIT", "label": "Store Entrance", "type": "threshold", "sku_zone": null},
+    {"zone_id": "EB_KOREAN", "label": "EB Korean", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[0,0],[320,0],[320,240],[0,240]]},
+    {"zone_id": "THE_FACE_SHOP", "label": "The Face Shop", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[320,0],[640,0],[640,240],[320,240]]},
+    {"zone_id": "GOOD_VIBES", "label": "Good Vibes", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[640,0],[960,0],[960,240],[640,240]]},
+    {"zone_id": "DERMDOC", "label": "DermDoc", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[960,0],[1280,0],[1280,240],[960,240]]},
+    {"zone_id": "MINIMALIST", "label": "Minimalist", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[0,240],[320,240],[320,480],[0,480]]},
+    {"zone_id": "AQUALOGICA", "label": "Aqualogica", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[320,240],[640,240],[640,480],[320,480]]},
+    {"zone_id": "LAKME_SKIN", "label": "Lakme Skin", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[640,240],[960,240],[960,480],[640,480]]},
+    {"zone_id": "ACCESSORIES", "label": "Accessories", "type": "brand", "sku_zone": "ACCESSORIES", "polygon": [[960,240],[1280,240],[1280,480],[960,480]]},
+    {"zone_id": "MAYBELLINE", "label": "Maybelline", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[0,480],[320,480],[320,720],[0,720]]},
+    {"zone_id": "FACES_CANADA", "label": "Faces Canada", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[320,480],[640,480],[640,720],[320,720]]},
+    {"zone_id": "LAKME_MAKEUP", "label": "Lakme Makeup", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[640,480],[960,480],[960,720],[640,720]]},
+    {"zone_id": "COLORBAR_SUGAR", "label": "Colorbar + Sugar", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[960,480],[1280,480],[1280,720],[960,720]]},
+    {"zone_id": "SWISS_BEAUTY", "label": "Swiss Beauty", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[0,0],[320,0],[320,240],[0,240]]},
+    {"zone_id": "NY_BAE", "label": "Renee / NY Bae", "type": "brand", "sku_zone": "MAKEUP", "polygon": [[320,0],[640,0],[640,240],[320,240]]},
+    {"zone_id": "ALPS_GOODNESS", "label": "Alps Goodness", "type": "brand", "sku_zone": "SKINCARE", "polygon": [[640,0],[960,0],[960,240],[640,240]]},
+    {"zone_id": "STREAX", "label": "Streax", "type": "brand", "sku_zone": "HAIR", "polygon": [[960,0],[1280,0],[1280,240],[960,240]]},
+    {"zone_id": "FOH", "label": "Front of House", "type": "central", "sku_zone": null, "polygon": [[0,0],[427,0],[427,360],[0,360]]},
+    {"zone_id": "FRAGRANCE", "label": "Fragrance Unit", "type": "central", "sku_zone": "FRAGRANCE", "polygon": [[427,0],[854,0],[854,360],[427,360]]},
+    {"zone_id": "NAIL_UNIT", "label": "Nail Unit", "type": "central", "sku_zone": "ACCESSORIES", "polygon": [[854,0],[1280,0],[1280,360],[854,360]]},
+    {"zone_id": "MAKEUP_UNIT", "label": "Makeup Unit", "type": "central", "sku_zone": "MAKEUP", "polygon": [[0,360],[640,360],[640,720],[0,720]]},
+    {"zone_id": "CASH_COUNTER", "label": "Cash Counter", "type": "billing", "sku_zone": null, "is_billing": true, "polygon": [[0,0],[640,0],[640,720],[0,720]]},
+    {"zone_id": "BILLING_QUEUE", "label": "Billing Queue", "type": "billing", "sku_zone": null, "is_billing": true, "polygon": [[640,0],[1280,0],[1280,720],[640,720]]}
+  ]
+}

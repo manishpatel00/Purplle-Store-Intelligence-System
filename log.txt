@@ -1,0 +1,4 @@
+[2026-06-03T09:59:51.371232] REPLAY: replayed 3 events from tests/fixtures/group_entry.jsonl at 1.0x speed to http://localhost:8000.
+[2026-06-03T10:19:19.049105] REPLAY: replayed 3 events from tests/fixtures/group_entry.jsonl at 1.0x speed to http://localhost:8000.
+[2026-06-03T10:29:34.572020] REPLAY: replayed 3 events from tests/fixtures/group_entry.jsonl at 1.0x speed to http://localhost:8000.
+[2026-06-03T11:54:17.499613] REPLAY: replayed 3 events from tests/fixtures/group_entry.jsonl at 1.0x speed to http://localhost:8000.

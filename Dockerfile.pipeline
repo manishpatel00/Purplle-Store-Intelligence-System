@@ -1,0 +1,28 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System deps for OpenCV (headless)
+RUN apt-get update && apt-get install -y \
+    curl \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Pipeline deps
+COPY requirements.pipeline.txt .
+RUN pip install --no-cache-dir -r requirements.pipeline.txt
+
+# Copy pipeline code
+COPY pipeline/ ./pipeline/
+COPY store_layout.json .
+COPY pipeline/run.sh ./run.sh
+RUN chmod +x ./run.sh
+
+# Create required dirs
+RUN mkdir -p /app/data/clips
+
+CMD ["bash", "./run.sh", "/app/data/clips", "STORE_BLR_002", "2026-04-10T10:00:00Z"]

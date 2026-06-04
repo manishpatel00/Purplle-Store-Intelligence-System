@@ -1,0 +1,8 @@
+// FIXTURE: all_staff — all sessions have is_staff=true
+// Expected: 0 customer visits in metrics, all metrics values return 0 or empty for customers
+// Scoring criterion: Metrics correctness under all staff (Part A, 10 pts)
+{"event_id": "evt_as001", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_as001", "event_type": "ENTRY", "timestamp": "2026-04-10T13:00:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": true, "confidence": 0.9}
+{"event_id": "evt_as002", "store_id": "STORE_BLR_002", "camera_id": "CAM_2", "visitor_id": "VIS_as001", "event_type": "ZONE_ENTER", "timestamp": "2026-04-10T13:02:00Z", "zone_id": "GOOD_VIBES", "dwell_ms": 0, "is_staff": true, "confidence": 0.9}
+{"event_id": "evt_as003", "store_id": "STORE_BLR_002", "camera_id": "CAM_2", "visitor_id": "VIS_as001", "event_type": "ZONE_EXIT", "timestamp": "2026-04-10T13:05:00Z", "zone_id": "GOOD_VIBES", "dwell_ms": 180000, "is_staff": true, "confidence": 0.9}
+{"event_id": "evt_as004", "store_id": "STORE_BLR_002", "camera_id": "CAM_5", "visitor_id": "VIS_as001", "event_type": "BILLING_QUEUE_JOIN", "timestamp": "2026-04-10T13:06:00Z", "zone_id": "CASH_COUNTER", "dwell_ms": 0, "is_staff": true, "confidence": 0.9, "extra_metadata": {"queue_depth": 1, "session_seq": 1}}
+{"event_id": "evt_as005", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_as001", "event_type": "EXIT", "timestamp": "2026-04-10T13:10:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 600000, "is_staff": true, "confidence": 0.9}

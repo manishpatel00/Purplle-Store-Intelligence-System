@@ -1,0 +1,6 @@
+// FIXTURE: reentry — visitor exits and enters again within 900 seconds
+// Expected: 1 unique visitor count, 1 REENTRY event, 1 session
+// Scoring criterion: Re-entry tracking (Part A, 10 pts)
+{"event_id": "evt_r001", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_r001", "event_type": "ENTRY", "timestamp": "2026-04-10T10:00:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": false, "confidence": 0.9}
+{"event_id": "evt_r002", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_r001", "event_type": "EXIT", "timestamp": "2026-04-10T10:05:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 300000, "is_staff": false, "confidence": 0.9}
+{"event_id": "evt_r003", "store_id": "STORE_BLR_002", "camera_id": "CAM_1", "visitor_id": "VIS_r001", "event_type": "REENTRY", "timestamp": "2026-04-10T10:10:00Z", "zone_id": "ENTRY_EXIT", "dwell_ms": 0, "is_staff": false, "confidence": 0.9}
