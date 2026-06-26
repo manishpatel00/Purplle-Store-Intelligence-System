@@ -1,7 +1,5 @@
 # Purplle Store Intelligence System
 
-**Round 2 · Purplle Tech Challenge 2026**
-
 > Turns raw CCTV footage into live retail intelligence — visitor tracking, funnel analytics, anomaly detection, real-time dashboard — all containerised and production-ready.
 
 [![Tests](https://img.shields.io/badge/tests-150%20passing-22c55e)](tests/) [![Coverage](https://img.shields.io/badge/coverage-86%25-3b82f6)](htmlcov/) [![Docker](https://img.shields.io/badge/docker-compose-0ea5e9)](docker-compose.yml) [![Python](https://img.shields.io/badge/python-3.9%2B-f59e0b)](requirements.api.txt)
@@ -28,7 +26,6 @@ Watch the complete end-to-end workflow of the Purplle Store Intelligence System.
 9. [Performance Profile](#9-performance-profile)
 10. [Project Structure](#10-project-structure)
 11. [Design Decisions](#11-design-decisions)
-12. [Submission Checklist](#12-submission-checklist)
 
 ---
 
@@ -778,26 +775,8 @@ FastAPI's async nature lets the same process handle concurrent ingest POSTs and 
 
 Training a binary classifier (staff/non-staff) would need labelled data we don't have at challenge time. HSV colour matching on the upper-body crop is deterministic, explainable, fast, and accurate enough given Purplle's distinctive purple uniform. False positives from purple-wearing customers are rare and acceptable.
 
----
-
-## 12. Submission Checklist
-
-- [x] All 150 tests pass: `pytest tests/ -v`
-- [x] Coverage ≥85%: `pytest --cov=app tests/`
-- [x] Docker cold-start works: `docker compose down -v && docker compose up --build -d && sleep 30 && curl http://localhost:8000/health`
-- [x] All API endpoints functional: `/metrics`, `/funnel`, `/anomalies`, `/heatmap`, `/health`
-- [x] WebSocket push verified: `wscat -c ws://localhost:8000/ws/STORE_BLR_002`
-- [x] Staff excluded from all KPIs
-- [x] Re-entry handled correctly
-- [x] Partial ingest (mixed valid/invalid batch) works correctly
-- [x] README.md complete
-- [x] DESIGN.md complete (architecture + DB schema + data flow)
-- [x] CHOICES.md complete (AI collaboration section included)
-- [x] No CCTV video files in repo (`.gitignore` covers `data/clips/`)
-- [x] No secrets committed (`.env` in `.gitignore`, `.env.example` provided)
-- [x] Git history clean with meaningful commits
 
 ---
 
-**Purplle Tech Challenge 2026 · Round 2**
-Built with Claude (Anthropic) + GPT-4 (OpenAI)
+For a detailed explanation of engineering choices, see [CHOICES.md](CHOICES.md).
+For architectural diagrams and schema definitions, see [DESIGN.md](DESIGN.md).
