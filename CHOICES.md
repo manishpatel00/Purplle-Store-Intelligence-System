@@ -1,6 +1,6 @@
-# CHOICES.md — Key Technical Decisions
+##  Technical Decisions & Trade-offs
 
-## 🤖 AI-Assisted Engineering Decisions
+### 🤖 AI-Assisted Engineering Decisions
 
 This system was built with full AI support across problem decomposition, architecture, and implementation. Below are the critical decisions where AI suggestions shaped or were purposefully diverged from.
 
