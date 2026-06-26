@@ -1,6 +1,10 @@
-# CHOICES.md — Key Technical Decisions
+## Key Technical Decisions & Trade-offs
 
-## 1. Detection Model: YOLOv8s
+This document records every significant engineering choice made for the Purplle Store Intelligence System, with explicit justification and trade-off analysis.
+
+---
+
+### 1. Detection Model: YOLOv8s
 
 ### Options Considered
 | Model | Inference Speed | Accuracy (COCO mAP) | Size | Pros | Cons |
