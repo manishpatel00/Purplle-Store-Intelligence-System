@@ -1,13 +1,61 @@
-# DESIGN.md — Purplle Store Intelligence System Architecture
+## Purplle Store Intelligence System Architecture
 
 ## System Overview
 
 The Purplle Store Intelligence System transforms raw CCTV footage into real-time, actionable retail analytics. It is designed as a modular, containerised pipeline that runs entirely via `docker compose up` with zero manual steps.
 
+## 1. System Architecture
+
 ```
-📹 Raw CCTV    →   🔍 Detection Layer   →   ⚡ Event Stream   →   🧠 Intelligence API   →   📊 Live Dashboard
-   (clips)          (YOLOv8s + ByteTrack)    (JSONL events)       (FastAPI + PostgreSQL)      (React + WebSocket)
+  ┌──────────────────────────────────────────┐
+  │  CCTV Video Files (any naming convention │
+  │  Store 1: CAM 3 - entry.mp4, etc.        │
+  │  Store 2: entry 1.mp4, billing_area.mp4  │
+  └────────────────────┬─────────────────────┘
+                       │
+                       ▼
+  ┌──────────────────────────────────────────┐
+  │         Python Detection Pipeline        │
+  │  YOLOv8-nano  ·  StoreTracker            │
+  │  Dynamic camera classifier               │
+  │  Emits: official Purplle JSONL schema    │
+  └────────────────────┬─────────────────────┘
+                       │  Redis Pub/Sub  (primary)
+                       │  HTTP POST      (fallback)
+                       ▼
+  ┌──────────────────────────────────────────┐
+  │        Node.js Express REST API          │
+  │  Schema normaliser · Session tracker     │
+  │  Anomaly engine  · POS correlator        │
+  └──────┬───────────────────────────────────┘
+         │  Write                │  Read
+         ▼                       ▼
+  ┌────────────┐     ┌──────────────────────┐
+  │ PostgreSQL │     │  transactions.csv    │
+  │ events     │     │  (Brigade Bangalore  │
+  │ sessions   │     │   detailed POS data) │
+  │ anomalies  │     └──────────────────────┘
+  │ brand_dwell│
+  └────────────┘
+         ▲
+         │  REST + WebSocket
+  ┌──────┴────────────────────────────────────┐
+  │   Vite + React Live Dashboard             │
+  │   Footfall · Funnel · Heatmap · Alerts    │
+  └───────────────────────────────────────────┘
 ```
+
+### Container topology (`docker compose up`)
+
+| Container | Role | Port |
+|-----------|------|------|
+| `store_intel_db` | PostgreSQL 15 | 5432 |
+| `store_intel_redis` | Redis 7 | 6379 |
+| `store_intel_api` | Express API + WebSocket | 3000 |
+| `store_intel_pipeline` | Python CV + Simulation | — |
+| `store_intel_dashboard` | Nginx → Vite SPA | 80 |
+
+---
 
 **North Star Metric**: **Offline Store Conversion Rate** — the ratio of visitors who completed a purchase to total unique visitors in a session window.
 
